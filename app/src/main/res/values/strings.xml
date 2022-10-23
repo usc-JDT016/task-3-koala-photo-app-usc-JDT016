@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">CSC202-Assessmen3-KoalaPhotoApp</string>
+    <string name="app_name">Koala Photo App</string>
+    <string name="koala_title_hint">Enter a title for your photo.</string>
+    <string name="koala_title_label">Title</string>
+    <string name="koala_description_label">Details</string>
 </resources>
