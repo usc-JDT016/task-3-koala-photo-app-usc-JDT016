@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.database.KoalaDatabase
+import com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.database.migration_1_2
+import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -14,11 +16,12 @@ class KoalaRepository private constructor(context: Context) {
         context.applicationContext,
         KoalaDatabase::class.java,
         DATABASE_NAME
-    ).build()
+    ).addMigrations(migration_1_2)
+        .build()
 
     private val koalaDao = database.koalaDao()
     private val executor = Executors.newSingleThreadExecutor()
-
+    private val filesDir = context.applicationContext.filesDir
 
 
     fun getKoalas(): LiveData<List<Koala>> = koalaDao.getKoalas()
@@ -37,6 +40,7 @@ class KoalaRepository private constructor(context: Context) {
         }
     }
 
+    fun getPhotoFile(koala: Koala): File = File(filesDir, koala.photoFileName)
 
     companion object {
         private var INSTANCE: KoalaRepository? = null

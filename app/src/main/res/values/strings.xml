@@ -3,4 +3,9 @@
     <string name="koala_title_hint">Enter a title for your photo.</string>
     <string name="koala_title_label">Title</string>
     <string name="koala_description_label">Details</string>
+    <string name="new_photo">New Photo</string>
+    <string name="app_help">Help</string>
+    <string name="share_photo">Share</string>
+    <string name="delete_button">Delete Record</string>
+    <string name="photo_detail">Details</string>
 </resources>

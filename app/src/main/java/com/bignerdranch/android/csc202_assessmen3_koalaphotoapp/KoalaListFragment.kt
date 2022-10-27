@@ -3,9 +3,7 @@ package com.bignerdranch.android.csc202_assessmen3_koalaphotoapp
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -39,6 +37,11 @@ class KoalaListFragment : Fragment() {
         callbacks = context as Callbacks?
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +73,24 @@ class KoalaListFragment : Fragment() {
         super.onDetach()
         callbacks = null
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_koala_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.new_photo -> {
+                val koala = Koala()
+                koalaListViewModel.addKoala(koala)
+                callbacks?.onKoalaSelected(koala.id)
+                true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
 
     private fun updateUI(koalas: List<Koala>) {
         adapter = KoalaAdapter(koalas)

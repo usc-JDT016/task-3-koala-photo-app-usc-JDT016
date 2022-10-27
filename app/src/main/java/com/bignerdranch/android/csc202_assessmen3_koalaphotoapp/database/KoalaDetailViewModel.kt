@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.Koala
 import com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.KoalaRepository
+import java.io.File
 import java.util.*
 
 class KoalaDetailViewModel : ViewModel() {
@@ -24,5 +25,9 @@ class KoalaDetailViewModel : ViewModel() {
 
     fun saveKoala(koala: Koala) {
         koalaRepository.updateKoala(koala)
+    }
+
+    fun getPhotoFile(koala: Koala): File {
+        return koalaRepository.getPhotoFile(koala)
     }
 }

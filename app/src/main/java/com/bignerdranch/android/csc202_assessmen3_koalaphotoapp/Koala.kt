@@ -7,4 +7,10 @@ import java.util.*
 data class Koala(@PrimaryKey val id: UUID = UUID.randomUUID(),
                  var title: String = "",
                  var date: Date = Date(),
-                 var description: String = "")
+                 var details: String = "",
+                 var description: String = ""){
+
+
+val photoFileName
+    get() = "IMG_$id.jpg"
+}
