@@ -3,22 +3,35 @@ package com.bignerdranch.android.csc202_assessmen3_koalaphotoapp
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.database.KoalaDetailViewModel
 import java.util.*
 import androidx.lifecycle.Observer
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import java.io.File
 
 private const val TAG = "KoalaFragment"
@@ -26,6 +39,7 @@ private const val ARG_PHOTO_ID = "photo_id"
 private const val DIALOG_DATE = "DialogDate"
 private const val REQUEST_DATE = 0
 private const val REQUEST_PHOTO = 2
+private const val DIALOG_PICTURE = "DialogPicture"
 
 
 class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
@@ -33,13 +47,17 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
     private lateinit var photoFile: File
     private lateinit var photoUri: Uri
     private lateinit var titleField: EditText
-    //private lateinit var detailField: EditText
+    private lateinit var photoPlace: EditText
     private lateinit var dateButton: Button
-    private lateinit var deletebutton: Button
+
 
     private lateinit var photoButton: ImageButton
     private lateinit var photoView: ImageView
-    private lateinit var mClient: GoogleAppClient
+    private lateinit var mLocationField: TextView
+    private lateinit var showMap: Button
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var shareButton: Button
+
 
 
     private val koalaDetailViewModel: KoalaDetailViewModel by lazy {
@@ -51,10 +69,12 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
         super.onCreate(savedInstanceState)
         koala = Koala()
         val koalaId: UUID = arguments?.getSerializable(ARG_PHOTO_ID) as UUID
-        mClient = new GoogleAppClient.Builder(activity)
-            .addApi(LocationServices.API)
-            .build;
         koalaDetailViewModel.loadKoala(koalaId)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+
+
     }
 
     override fun onCreateView(
@@ -64,15 +84,74 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_koala, container, false)
         titleField = view.findViewById(R.id.photo_title) as EditText
-        //detailField = view.findViewById(R.id.photo_details) as EditText
+        photoPlace = view.findViewById(R.id.photo_place) as EditText
         dateButton = view.findViewById(R.id.photo_date) as Button
-        //solvedCheckBox = view.findViewById(R.id.cri_solved) as CheckBox
-        //deleteButton = view.findViewById(R.id.delete_button) as Button
+
         photoButton = view.findViewById(R.id.koala_camera) as ImageButton
         photoView = view.findViewById(R.id.koala_photo) as ImageView
+        mLocationField = view.findViewById(R.id.locationView)
+        showMap= view.findViewById(R.id.map_button)
+        shareButton = view.findViewById(R.id.share_button)
+
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "Try to get a Location")
+
+            if (GoogleApiAvailability.getInstance()
+                    .isGooglePlayServicesAvailable(requireContext()) == ConnectionResult.SUCCESS
+            ) {
+                //get location
+            }
+        }
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext()) == ConnectionResult.SUCCESS) {
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+                override fun onCanceledRequested(p0: OnTokenCanceledListener) =
+                    CancellationTokenSource().token
+
+
+                override fun isCancellationRequested() = false
+
+            }).addOnSuccessListener { location: Location? ->
+                location?.let {
+                    Log.i("Location", "Got a Fix: " + location)
+                }
+            }
+        }
+
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext()) == ConnectionResult.SUCCESS){
+            fusedLocationClient.getLastLocation()
+                .addOnSuccessListener { location: Location? ->
+                    location?.let{
+                        koala.lat = location.getLatitude().toString()
+                        koala.lon = location.getLongitude().toString()
+                        mLocationField.setText(
+                            String.format(
+                                "Lat: %s,  lon:%s",
+                                koala.lat,
+                                koala.lon
+                            )
+                        )
+                        Log.i("LOCATION", "Got a fix: " + location)
+                    }
+                }
+        }
+
+
+
 
         return view
     }
+
+
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,10 +170,9 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
     }
 
 
+
     override fun onStart() {
         super.onStart()
-        mClient.connect();
-
 
         val titleWatcher = object : TextWatcher {
 
@@ -104,7 +182,7 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
                 count: Int,
                 after: Int
             ) {
-                // This space intentionally left blank
+
             }
 
             override fun onTextChanged(
@@ -114,7 +192,33 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
                 count: Int
             ) {
                 koala.title = sequence.toString()
-                //koala.details = sequence.toString()
+
+            }
+
+            override fun afterTextChanged(sequence: Editable?) {
+                // This one too
+            }
+        }
+
+        val placeWatcher = object : TextWatcher {
+
+            override fun beforeTextChanged(
+                sequence: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+
+            }
+
+            override fun onTextChanged(
+                sequence: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                koala.place = sequence.toString()
+
             }
 
             override fun afterTextChanged(sequence: Editable?) {
@@ -131,8 +235,19 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
         }
 
         titleField.addTextChangedListener(titleWatcher)
+        photoPlace.addTextChangedListener(placeWatcher)
 
+        showMap.setOnClickListener {
+                val intent = Intent(requireContext(), MapsActivity::class.java)
+                // start Maps activity
+                startActivity(intent)
+        }
 
+        shareButton.setOnClickListener {
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            // return to ListViewModel activity
+            startActivity(intent)
+        }
         photoButton.apply {
             val packageManager: PackageManager = requireActivity().packageManager
 
@@ -161,12 +276,23 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
                 startActivityForResult(captureImage, REQUEST_PHOTO)
             }
         }
+        photoView.setOnClickListener {
+
+            val zoomDialog= ZoomDialogFragment.newInstance(koala.photoFileName)
+
+            fragmentManager?.let { it1 -> zoomDialog.show(it1,null) }
+
+        }
+
+
+
+
 
     }
 
+
     override fun onStop() {
         super.onStop()
-        mClient.disconnect()
         koalaDetailViewModel.saveKoala(koala)
     }
 
@@ -175,6 +301,7 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
         requireActivity().revokeUriPermission(photoUri,
             Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
+
 
     override fun onDateSelected(date: Date) {
         koala.date = date

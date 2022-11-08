@@ -3,9 +3,16 @@
     <string name="koala_title_hint">Enter a title for your photo.</string>
     <string name="koala_title_label">Title</string>
     <string name="koala_description_label">Details</string>
-    <string name="new_photo">New Photo</string>
+    <string name="new_photo">New</string>
     <string name="app_help">Help</string>
     <string name="share_photo">Share</string>
     <string name="delete_button">Delete Record</string>
-    <string name="photo_detail">Details</string>
+    <string name="photo_place_hint">Enter Place Details</string>
+    <string name="help_text">Help</string>
+    <string name="MAPS_API_KEY">AIzaSyCUhyAt0Z0OXIwXwZmO6NKyfHXduYa95Ms</string>
+
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="lat_text">Latitude</string>
+    <string name="lon_text">Longitude</string>
+    <string name="show_map">SHOW MAP</string>
 </resources>

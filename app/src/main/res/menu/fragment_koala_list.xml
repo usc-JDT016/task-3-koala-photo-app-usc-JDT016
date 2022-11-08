@@ -2,7 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/new_photo"
-        android:icon="@drawable/ic_menu_add"
         android:title="@string/new_photo"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/app_help"
+        android:title="@string/app_help"
         app:showAsAction="ifRoom|withText"/>
 </menu>

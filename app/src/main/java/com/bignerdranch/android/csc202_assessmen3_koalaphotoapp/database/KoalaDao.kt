@@ -1,10 +1,7 @@
 package com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.bignerdranch.android.csc202_assessmen3_koalaphotoapp.Koala
 import java.util.*
 
@@ -16,6 +13,9 @@ interface KoalaDao {
 
     @Query("SELECT * FROM koala WHERE id=(:id)")
     fun getKoala(id: UUID): LiveData<Koala?>
+
+    @Delete
+    fun deleteKoala(koala: Koala)
 
     @Update
     fun updateKoala(koala: Koala)

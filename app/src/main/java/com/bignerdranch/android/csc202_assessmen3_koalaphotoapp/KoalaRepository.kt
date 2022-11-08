@@ -40,6 +40,8 @@ class KoalaRepository private constructor(context: Context) {
         }
     }
 
+
+
     fun getPhotoFile(koala: Koala): File = File(filesDir, koala.photoFileName)
 
     companion object {

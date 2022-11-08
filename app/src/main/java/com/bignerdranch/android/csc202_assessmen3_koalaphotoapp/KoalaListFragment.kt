@@ -1,6 +1,8 @@
 package com.bignerdranch.android.csc202_assessmen3_koalaphotoapp
 
+import android.content.ClipData.newIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -11,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.help_activity.*
 import java.util.*
 
 private const val TAG = "KoalaListFragment"
@@ -87,9 +90,20 @@ class KoalaListFragment : Fragment() {
                 callbacks?.onKoalaSelected(koala.id)
                 true
             }
+
+            R.id.app_help -> {
+                val intent = Intent(requireContext(), HelpActivity::class.java)
+                // start your next activity
+                startActivity(intent)
+
+            true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
+
     }
+
+
 
 
     private fun updateUI(koalas: List<Koala>) {
@@ -98,12 +112,13 @@ class KoalaListFragment : Fragment() {
     }
 
 
-
     private inner class KoalaHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnClickListener {
         private lateinit var koala: Koala
         private val titleTextView: TextView = itemView.findViewById(R.id.photo_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.photo_date)
+        private val placeTextView: TextView = itemView.findViewById(R.id.photo_place)
+
 
         init {
             itemView.setOnClickListener(this)
@@ -112,6 +127,7 @@ class KoalaListFragment : Fragment() {
         fun bind(koala: Koala) {
             this.koala = koala
             titleTextView.text = this.koala.title
+            placeTextView.text = this.koala.place
             dateTextView.text = this.koala.date.toString()
         }
 
@@ -119,6 +135,7 @@ class KoalaListFragment : Fragment() {
             callbacks?.onKoalaSelected(koala.id)
         }
     }
+
     private inner class KoalaAdapter(var koalas: List<Koala>)
         : RecyclerView.Adapter<KoalaHolder>() {
 

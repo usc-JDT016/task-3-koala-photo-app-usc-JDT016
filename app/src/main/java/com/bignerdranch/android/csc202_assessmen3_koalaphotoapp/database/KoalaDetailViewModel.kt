@@ -27,6 +27,7 @@ class KoalaDetailViewModel : ViewModel() {
         koalaRepository.updateKoala(koala)
     }
 
+
     fun getPhotoFile(koala: Koala): File {
         return koalaRepository.getPhotoFile(koala)
     }

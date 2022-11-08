@@ -38,61 +38,54 @@
         android:layout_weight="1">
 
 
-        <EditText
-            android:id="@+id/photo_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/koala_title_hint"/>
+        <TextView
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/koala_title_label"/>
 
-        <EditText
-            android:id="@+id/photo_place"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/photo_place_hint"
-            android:textColor="#686868" />
+    <EditText
+        android:id="@+id/photo_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/koala_title_hint"/>
     </LinearLayout>
     </LinearLayout>
+    <EditText
+        android:id="@+id/photo_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/photo_place_hint"/>
+
 
     <Button
         android:id="@+id/photo_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         tools:text="Wed Nov 14 11:56 EST 2018"/>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/delete_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp">
+        tools:text="@string/delete_button"/>
+
     <TextView
-        android:id="@+id/locationView"
-        android:layout_width="match_parent"
+        android:id="@+id/locationview"
+        android:layout_width="wrap_content"
         android:layout_height="38dp"
-        android:background="#A8A8A8"
+        android:background="@android:color/system_neutral1_100"
         android:cropToPadding="true"
         android:scaleType="centerInside"
-        android:text="@+id/locationview"
         android:textColor="#000000"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="Lat: %s,  lon: %s" />
+
     <Button
-        android:id="@+id/map_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        tools:text="@string/show_map" />
-    </LinearLayout>
-    <Button
-        android:id="@+id/share_button"
+        android:id="@+id/show_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#000000"
-        tools:text="@string/share_photo" />
+        tools:text="@string/show_map"/>
 
 </LinearLayout>
