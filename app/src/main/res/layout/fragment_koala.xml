@@ -82,8 +82,7 @@
         android:id="@+id/map_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        tools:text="@string/show_map" />
+        android:text="@string/show_map" />
     </LinearLayout>
     <Button
         android:id="@+id/share_button"
@@ -92,7 +91,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
         android:layout_gravity="center_horizontal"
-        android:textColor="#000000"
-        tools:text="@string/share_photo" />
+        android:text="@string/share_photo" />
 
 </LinearLayout>

@@ -40,7 +40,7 @@ private const val DIALOG_DATE = "DialogDate"
 private const val REQUEST_DATE = 0
 private const val REQUEST_PHOTO = 2
 private const val DIALOG_PICTURE = "DialogPicture"
-
+//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
 
 class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
     private lateinit var koala: Koala
@@ -49,14 +49,14 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
     private lateinit var titleField: EditText
     private lateinit var photoPlace: EditText
     private lateinit var dateButton: Button
-
-
+    private lateinit var showMap: Button
+    private lateinit var shareButton: Button
     private lateinit var photoButton: ImageButton
+
     private lateinit var photoView: ImageView
     private lateinit var mLocationField: TextView
-    private lateinit var showMap: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var shareButton: Button
+
 
 
 
@@ -90,8 +90,9 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
         photoButton = view.findViewById(R.id.koala_camera) as ImageButton
         photoView = view.findViewById(R.id.koala_photo) as ImageView
         mLocationField = view.findViewById(R.id.locationView)
-        showMap= view.findViewById(R.id.map_button)
-        shareButton = view.findViewById(R.id.share_button)
+        showMap= view.findViewById(R.id.map_button) as Button
+        shareButton = view.findViewById(R.id.share_button) as Button
+
 
 
         if (ActivityCompat.checkSelfPermission(
@@ -110,6 +111,23 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
                 //get location
             }
         }
+
+
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext()) == ConnectionResult.SUCCESS){
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let{
+                        koala.lat = location.latitude.toString()
+                        koala.lon = location.longitude.toString()
+                        mLocationField.text = String.format(
+                            "Lat: %s,  lon:%s",
+                            koala.lat,
+                            koala.lon
+                        )
+                        Log.i("LOCATION", "Got a fix: " + location)
+                    }
+                }
+        }
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext()) == ConnectionResult.SUCCESS) {
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
                 override fun onCanceledRequested(p0: OnTokenCanceledListener) =
@@ -125,31 +143,9 @@ class KoalaFragment : Fragment(), DatePickerFragment.Callbacks {
             }
         }
 
-        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(requireContext()) == ConnectionResult.SUCCESS){
-            fusedLocationClient.getLastLocation()
-                .addOnSuccessListener { location: Location? ->
-                    location?.let{
-                        koala.lat = location.getLatitude().toString()
-                        koala.lon = location.getLongitude().toString()
-                        mLocationField.setText(
-                            String.format(
-                                "Lat: %s,  lon:%s",
-                                koala.lat,
-                                koala.lon
-                            )
-                        )
-                        Log.i("LOCATION", "Got a fix: " + location)
-                    }
-                }
-        }
-
-
-
 
         return view
     }
-
-
 
 
 
